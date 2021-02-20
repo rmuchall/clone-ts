@@ -6,15 +6,10 @@ export abstract class Clone {
     }
 
     static deep<T>(source: T): T {
-        // Check for null
-        if (source === null) {
-            return source;
-        }
-
         // Handle known types
         const sourceType = Object.prototype.toString.call(source);
         if (Clone.knownTypes[sourceType]) {
-            return Clone.knownTypes[sourceType](source);
+            return Clone.knownTypes[sourceType](source) as T;
         }
 
         // Handle arrays
@@ -23,8 +18,7 @@ export abstract class Clone {
         }
 
         // Handle objects
-        if (typeof source === "object") {
-            // No need to check for null as we do it above
+        if (typeof source === "object" && source !== null) {
             const constructor: any = (source as any).constructor;
             const destination = new constructor();
 
@@ -32,7 +26,7 @@ export abstract class Clone {
                 destination[key] = Clone.deep((source as any)[key]);
             }
 
-            return destination;
+            return destination as T;
         }
 
         // Handle primitives
@@ -52,15 +46,15 @@ export abstract class Clone {
         return new Date(source.getTime());
     }
 
-    private static regExp(targetRegexp: RegExp): RegExp {
-        const result = new RegExp(targetRegexp.source, targetRegexp.flags);
-        result.lastIndex = targetRegexp.lastIndex;
-        return result;
+    private static regExp(source: RegExp): RegExp {
+        const destination = new RegExp(source.source, source.flags);
+        destination.lastIndex = source.lastIndex;
+        return destination;
     }
 
-    private static arrayBuffer(arrayBuffer: ArrayBuffer): ArrayBuffer {
-        const destination = new ArrayBuffer(arrayBuffer.byteLength);
-        new Uint8Array(destination).set(new Uint8Array(arrayBuffer));
+    private static arrayBuffer(source: ArrayBuffer): ArrayBuffer {
+        const destination = new ArrayBuffer(source.byteLength);
+        new Uint8Array(destination).set(new Uint8Array(source));
         return destination;
     }
 }

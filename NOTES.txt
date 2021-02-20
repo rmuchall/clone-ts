@@ -1,0 +1,2 @@
+https://github.com/erikvullings/deep-copy-ts
+https://github.com/pvorb/clone

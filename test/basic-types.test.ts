@@ -18,7 +18,7 @@ test("simple object", () => {
         name: "Doodad",
         color: "Blue",
         model: 1234
-    }
+    };
 
     const destination = Clone.deep(source);
     expect.assertions(4);
